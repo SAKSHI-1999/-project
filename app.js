@@ -8,7 +8,16 @@ const QRcode = require("qrcode");
 require("dotenv").config();
 
 const app = express();
-const upload = multer({ dest: "uploads/" });
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function(req, file, cb) {
+    cb(null, file.originalname);
+  }
+});
+
+const upload = multer({ storage });
 
 const PORT = process.env.PORT || 3300;
 
@@ -52,6 +61,20 @@ app.post(
     } else {
       emails = req.body.email.split(";");
     }
+
+    const { subject, type } = req.body;
+
+    const message = type === "text" ? req.body.text : req.body.html;
+
+    console.log(req.body);
+
+    const msg = await util.sendMail({
+      emails,
+      message,
+      type,
+      subject,
+      attachments
+    });
 
     res.send({ emails });
   }
