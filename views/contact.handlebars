@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>DSC PROJECT HADES</title>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.css" />
+  <link rel="stylesheet" href="public/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1 class="brand"><span>DSC  </span>PROJECT HADES</h1>
+    <div class="wrapper animated bounceInLeft">
+      <div class="company-info">
+        <h3>DSC PROJECT HADES</h3>
+        <ul>
+          <li><i class="fa fa-road"></i> 44 Something st</li>
+          <li><i class="fa fa-phone"></i> (555) 555-5555</li>
+          <li><i class="fa fa-envelope"></i> abc@gamil.com</li>
+        </ul>
+      </div>
+      <div class="contact">
+        <h3>Email Us</h3>
+        <div id="fail" style="color:red"> {{err}}</div>
+        <div id="sucess" style="color:green"> {{msg}}</div>
+        <form id="frm" name="form" method="POST" action="send"  enctype="multipart/form-data">
+          <p>
+            <label>Email Address</label>
+            <input type="text" name="email">
+          </p>
+          <p>
+            <label>CSV</label>
+            <input type="file" name="csv">
+          </p>
+          <p  class="full" style="text-align:center">
+            or
+          </p>
+          <p class="full">
+            <label>Event Name</label>
+            <input type="text" name="event">
+          </p>
+          {{!-- <p> --}}
+            <input type="radio" name="part" value="all"/> All Participants
+            <input type="radio" name="part" value="present"/> Present Participants
+            <input type="radio" name="part" value="absent"/> Absent Participants
+          {{!-- </p> --}}
+          <p class="full">
+            <label>Subject</label>
+            <input required='true' type="text" name="subject">
+          </p>
+          <p>
+            <label>Text Message</label>
+            <textarea name="text" rows="5"></textarea>
+          </p>
+          <p>
+            <label>HTML</label>
+            <textarea name="html" rows="5"></textarea>
+          </p>
+          {{!-- <p> --}}
+            <input required='true ' type="radio" name="type" value="text"/>Text
+            <input required='true ' type="radio" name="type" value="html"/>HTML
+          {{!-- </p> --}}
+          <p class="full">
+            <label>Attachment</label>
+            <input type="file" name="attachment" multiple>
+          </p>
+          <p class="full">
+            <button type=submit>Submit</button>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+<script src="/public/js/jquery-3.3.1.slim.min.js"></script>
+<script>
+  $('#frm').submit((e)=>{
+    e.preventDefault()
+
+    var form_= new FormData()
+    form_.append('csv',form.csv.files[0])
+    form_.append('attachment',form.attachment.files[0])
+    form_.append('email',form.email.value)
+    form_.append('event',form.event.value)
+    form_.append('part',form.part.value)
+    form_.append('subject',form.subject.value)
+    form_.append('text',form.text.value)
+    form_.append('html',form.html.value)
+    form_.append('type',form.type.value)
+    $.ajax({url:'/send',type:'post',
+      data:form_,
+      contentType: false,
+      processData: false,
+    }).done(e=>{
+      $('#sucess').html('mail sent')
+      $('#fail').html('')
+    }).catch(e=>{
+      console.log(e.responseJSON)
+      $('#sucess').html('')
+      $('#fail').html(e.responseJSON.err)
+    })
+  })
+</script>
+
+</html>
